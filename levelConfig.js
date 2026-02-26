@@ -216,9 +216,10 @@ const levels = [
 ];
 
 // 当前关卡索引
-let currentLevelIndex = 1;
+let currentLevelIndex = 0;
 
 // 获取当前关卡
 function getCurrentLevel() {
   return levels[currentLevelIndex];
 }
+
