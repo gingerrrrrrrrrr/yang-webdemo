@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>仿 · 羊了个羊 · 极简版</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>🐑🐑🐑🐑🐑</h1>
+
+    <!-- 游戏画布：我们先用 canvas 来画，简单直接 -->
+    <canvas id="gameCanvas" width="400" height="700"></canvas>
+
+    <div id="gameOverlay" class="overlay hidden">
+      <div class="overlay-content">
+        <p id="overlayMessage"></p>
+        <!-- <button id="resetButton" class="reset-in-overlay">再来一局</button> -->
+        <button id="overlayButton" class="overlay-button">再来一局</button>
+      </div>
+    </div>
+
+    <script src="cardTypes.js"></script>
+    <script src="levelConfig.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+canvas {
+  border: none;        /* 或者删除这一行 */
+  background-color: #fff;
+  margin-top: 20px;
+  /* width: 100%;         让画布宽度自适应屏幕 */
+  /* height: auto;        高度按比例缩放 */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay-content {
+  background-color: white;
+  padding: 30px 50px;
+  border-radius: 20px;
+  font-size: 32px;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#overlayMessage.win {
+  color: #4CAF50;
+}
+
+#overlayMessage.lose {
+  color: #f44336;
+}
+
+/* 浮动层里的按钮样式 */
+/* .reset-in-overlay {
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+} */
+.overlay-button {
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
