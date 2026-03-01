@@ -1,14 +1,17 @@
 // 羊了个羊 · 核心逻辑
 
 // 牌的基本尺寸
-const CARD_WIDTH = 50;
-const CARD_HEIGHT = 50;
+const CARD_WIDTH = 128;
+const CARD_HEIGHT = 128;
 
 // 卡槽配置（加在文件前面，CARD_WIDTH/HEIGHT 下面）
 const SLOT_COUNT = 7; // 卡槽数量
-const SLOT_START_X = 10; // 卡槽起始 X 坐标
-const SLOT_START_Y = 580; // 卡槽起始 Y 坐标（画布高700，留出底部空间）
-const SLOT_SPACING = 55; // 卡槽间距（比牌宽稍大）
+const SLOT_START_X = 55; // 卡槽起始 X 坐标
+const SLOT_START_Y = 1700; // 卡槽起始 Y 坐标（画布高700，留出底部空间）
+const SLOT_SPACING = 140; // 卡槽间距（比牌宽稍大）
+
+// 图片缓存
+const imageCache = {};
 
 // 存放所有牌的数组
 let allCards = [];
@@ -23,6 +26,13 @@ const overlay = document.getElementById("gameOverlay");
 const overlayMessage = document.getElementById("overlayMessage");
 
 const overlayButton = document.getElementById("overlayButton");
+
+// 预加载图片
+cardTypeLibrary.forEach((type) => {
+  const img = new Image();
+  img.src = "images/" + type.imageFile;
+  imageCache[type.imageFile] = img;
+});
 
 // const overlayResetBtn = document.querySelector(".reset-in-overlay");
 // overlayResetBtn.addEventListener("click", () => {
@@ -178,7 +188,8 @@ function generateDeck() {
     allCards.push({
       id: `card-${index + 1}`, // 从1开始
       typeId: typeId,
-      displayChar: typeInfo.displayChar, // 从类型库复制过来
+      //   displayChar: typeInfo.displayChar, // 从类型库复制过来
+      imageFile: typeInfo.imageFile, // 从 displayChar 改成 imageFile
       x: pos.x,
       y: pos.y,
       z: pos.z,
@@ -246,15 +257,43 @@ function drawCard(card) {
   //   ctx.strokeRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
 
   // 画表情文字
-  ctx.font = "24px Arial";
-  ctx.fillStyle = "#000";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(
-    card.displayChar,
-    card.x + CARD_WIDTH / 2,
-    card.y + CARD_HEIGHT / 2,
-  );
+  //   ctx.font = "56px Arial";
+  //   ctx.fillStyle = "#464545";
+  //   ctx.textAlign = "center";
+  //   ctx.textBaseline = "middle";
+  //   ctx.fillText(
+  //     card.displayChar,
+  //     card.x + CARD_WIDTH / 2,
+  //     card.y + CARD_HEIGHT / 2,
+  //   );
+
+  //   // 计算缩放后的尺寸（原尺寸的70%）
+  //   const imgWidth = CARD_WIDTH * 0.7;
+  //   const imgHeight = CARD_HEIGHT * 0.7;
+
+  //   // 计算居中位置
+  //   const imgX = card.x + (CARD_WIDTH - imgWidth) / 2;
+  //   const imgY = card.y + (CARD_HEIGHT - imgHeight) / 2;
+
+  // 画图片
+  //   const img = new Image();
+  //   img.src = "images/" + card.imageFile;
+  //   ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+
+  // 从缓存取图片
+  const img = imageCache[card.imageFile];
+  if (img) {
+    // 计算缩放后的尺寸（原尺寸的70%）
+    const imgWidth = CARD_WIDTH * 0.7;
+    const imgHeight = CARD_HEIGHT * 0.7;
+
+    // 计算居中位置
+    const imgX = card.x + (CARD_WIDTH - imgWidth) / 2;
+    const imgY = card.y + (CARD_HEIGHT - imgHeight) / 2;
+
+    // 画图片
+    ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+  }
 
   // 新增：如果是被盖住的牌，盖一层半透明灰
   if (card.state === "onBoardHidden") {
@@ -495,4 +534,45 @@ function resetGame() {
   // renderBoard();
 
   console.log("游戏已重置");
+}
+
+// 动画工具：等待指定毫秒
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// 播放点击动画（缩放）
+async function playClickAnimation(card) {
+  // 记录原尺寸
+  const originalWidth = CARD_WIDTH;
+  const originalHeight = CARD_HEIGHT;
+  const originalX = card.x;
+  const originalY = card.y;
+
+  // 计算缩小后的尺寸和位置（以牌中心为基准）
+  const scale = 0.9;
+  const scaledWidth = originalWidth * scale;
+  const scaledHeight = originalHeight * scale;
+  const scaledX = originalX + (originalWidth - scaledWidth) / 2;
+  const scaledY = originalY + (originalHeight - scaledHeight) / 2;
+
+  // 临时修改牌的尺寸和位置（缩小）
+  card.animWidth = scaledWidth;
+  card.animHeight = scaledHeight;
+  card.animX = scaledX;
+  card.animY = scaledY;
+
+  // 重绘
+  renderBoard();
+  await sleep(80); // 停留 80ms
+
+  // 恢复原尺寸（放大）
+  card.animWidth = originalWidth;
+  card.animHeight = originalHeight;
+  card.animX = originalX;
+  card.animY = originalY;
+
+  // 重绘
+  renderBoard();
+  await sleep(50); // 再停一下
 }

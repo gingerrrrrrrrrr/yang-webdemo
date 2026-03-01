@@ -3,15 +3,15 @@
 // 第1关坐标生成函数
 function generateLevel1Positions() {
   const positions = [];
-  const startX = 50;
-  const startY = 150;
+  const startX = 220;
+  const startY = 450;
   let z = 1; // 从1开始
 
   for (let layer = 0; layer < 5; layer++) {
     for (let row = 0; row < 2; row++) {
       for (let col = 0; col < 3; col++) {
-        const baseX = startX + layer * 30 + col * 60;
-        const baseY = startY + layer * 30 + row * 60;
+        const baseX = startX + layer * 60 + col * 140;
+        const baseY = startY + layer * 80 + row * 140;
         positions.push({
           x: Math.floor(baseX),
           y: Math.floor(baseY),
@@ -54,9 +54,9 @@ function generateLevel2Positions() {
 
   // 三座塔的基准坐标
   const towers = [
-    { baseX: 20, baseY: 300 }, // 左塔
-    { baseX: 120, baseY: 100 }, // 中塔
-    { baseX: 230, baseY: 300 }, // 右塔
+    { baseX: 100, baseY: 900 }, // 左塔
+    { baseX: 340, baseY: 300 }, // 中塔
+    { baseX: 600, baseY: 900 }, // 右塔
   ];
 
   // 每座塔18张牌：底层6张，中层6张，顶层6张
@@ -65,19 +65,19 @@ function generateLevel2Positions() {
     for (let row = 0; row < 2; row++) {
       for (let col = 0; col < 3; col++) {
         positions.push({
-          x: tower.baseX + col * 55,
-          y: tower.baseY + row * 60,
+          x: tower.baseX + col * 140,
+          y: tower.baseY + row * 140,
           z: z++,
         });
       }
     }
     // 中层6张：完全重叠在底层中间位置，露出一点边缘
-    const midX = tower.baseX + 55;
-    const midY = tower.baseY + 30;
+    const midX = tower.baseX + 120;
+    const midY = tower.baseY + 120;
     for (let i = 0; i < 6; i++) {
       positions.push({
-        x: midX + (i % 2) * 60 - 30, // 微微错开，不完全重叠
-        y: midY + Math.floor(i / 2) * 60 - 60,
+        x: midX + (i % 2) * 140 - 30, // 微微错开，不完全重叠
+        y: midY + Math.floor(i / 2) * 140 - 180,
         z: z++,
       });
     }
@@ -87,8 +87,8 @@ function generateLevel2Positions() {
     const topY = midY + 15;
     for (let i = 0; i < 6; i++) {
       positions.push({
-        x: topX + (i % 2) * 40 - 40,
-        y: topY + Math.floor(i / 2) * 50 - 50,
+        x: topX + (i % 2) * 120,
+        y: topY + Math.floor(i / 2) * 160 - 160,
         z: z++,
       });
     }
@@ -216,10 +216,9 @@ const levels = [
 ];
 
 // 当前关卡索引
-let currentLevelIndex = 0;
+let currentLevelIndex = 1;
 
 // 获取当前关卡
 function getCurrentLevel() {
   return levels[currentLevelIndex];
 }
-
