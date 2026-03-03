@@ -38,6 +38,8 @@ cardTypeLibrary.forEach((type) => {
 // overlayResetBtn.addEventListener("click", () => {
 //   resetGame();
 // });
+
+//关卡切换按钮
 overlayButton.addEventListener("click", () => {
   if (overlayButton.textContent === "下一关") {
     // 切换到下一关
@@ -54,7 +56,7 @@ overlayButton.addEventListener("click", () => {
 });
 
 // 点击画布
-canvas.addEventListener("click", function (event) {
+canvas.addEventListener("click", async function (event) {
   // 获取点击位置相对于 canvas 的坐标
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width; // canvas 实际像素和显示宽度的比例
@@ -90,12 +92,24 @@ canvas.addEventListener("click", function (event) {
   if (hitCard) {
     if (hitCard.state === "onBoardVisible") {
       console.log("✅ 点击了可见牌：", hitCard);
+      // 播放动画
+      //   await playClickAnimation(hitCard);
 
-      // 1. 找出当前在卡槽里的所有牌（按放入顺序）
-      const slotCards = allCards.filter((card) => card.state === "inSlot");
-      // 2. 如果卡槽没满（小于7张）
+      //   // 动画结束后，清除动画属性
+      //   delete hitCard.animX;
+      //   delete hitCard.animY;
+      //   delete hitCard.animWidth;
+      //   delete hitCard.animHeight;
+
+      // 找出当前在卡槽里的所有牌（按放入顺序）
+      let slotCards = allCards.filter((card) => card.state === "inSlot");
+      // 如果卡槽没满（小于7张）
       if (slotCards.length < SLOT_COUNT) {
-        // 3. 把这张牌的状态改成 inSlot
+        // // 调用 updateCoverStatus，传入被点牌，拿到重叠牌数组
+        // const overlapCards = updateCoverStatus(hitCard);
+        // // 清掉被点牌的位置
+        // ctx.clearRect(hitCard.x, hitCard.y, CARD_WIDTH, CARD_HEIGHT);
+        // 把这张牌的状态改成 inSlot
         hitCard.state = "inSlot";
         slotOrder.push(hitCard.id); // 记录顺序
         // 重新计算所有卡槽牌的位置
@@ -119,6 +133,14 @@ canvas.addEventListener("click", function (event) {
         updateCoverStatus();
         // 重新渲染
         renderBoard();
+
+        // // 4. 找出所有卡槽里的牌
+        // slotCards = allCards.filter((card) => card.state === "inSlot");
+
+        // // 6. 重画所有需要画的牌
+        // overlapCards.forEach((card) => drawCard(card));
+        // slotCards.forEach((card) => drawCard(card));
+
         // --- 新增结束 ---
       } else {
         // console.log("⚠️ 卡槽已满，不能再移入");
@@ -132,7 +154,22 @@ canvas.addEventListener("click", function (event) {
 });
 
 // 执行生成
-generateDeck();
+// generateDeck();
+// 预加载图片（已在前面写好）
+
+// 等待所有图片加载完成
+Promise.all(
+  cardTypeLibrary.map((type) => {
+    return new Promise((resolve) => {
+      const img = imageCache[type.imageFile];
+      if (img.complete) resolve();
+      else img.onload = resolve;
+    });
+  }),
+).then(() => {
+  // 所有图片加载完，再生成牌堆和渲染
+  generateDeck();
+});
 
 //以下为函数定义
 
@@ -226,6 +263,13 @@ function renderBoard() {
 
 // 画单张牌
 function drawCard(card) {
+  // 如果存在动画尺寸，优先使用
+  //   const drawX = card.animX !== undefined ? card.animX : card.x;
+  //   const drawY = card.animY !== undefined ? card.animY : card.y;
+  //   const drawWidth = card.animWidth !== undefined ? card.animWidth : CARD_WIDTH;
+  //   const drawHeight =
+  //     card.animHeight !== undefined ? card.animHeight : CARD_HEIGHT;
+
   // 设置阴影（模糊一点，稍微右下偏移）
   ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
   ctx.shadowBlur = 6;
@@ -246,8 +290,9 @@ function drawCard(card) {
   gradient.addColorStop(1, "#dcdcdc"); // 右下暗
   ctx.fillStyle = gradient; // 设置渐变填充
 
-  //   ctx.fillRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
   roundRect(ctx, card.x, card.y, CARD_WIDTH, CARD_HEIGHT, 10);
+  //   roundRect(ctx, drawX, drawY, drawWidth, drawHeight, 10);
+
   ctx.fill();
   // 关掉阴影（免得文字也有阴影）
   ctx.shadowColor = "transparent";
@@ -255,30 +300,6 @@ function drawCard(card) {
   //   ctx.strokeStyle = "#9694a1";
   //   ctx.lineWidth = 2;
   //   ctx.strokeRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
-
-  // 画表情文字
-  //   ctx.font = "56px Arial";
-  //   ctx.fillStyle = "#464545";
-  //   ctx.textAlign = "center";
-  //   ctx.textBaseline = "middle";
-  //   ctx.fillText(
-  //     card.displayChar,
-  //     card.x + CARD_WIDTH / 2,
-  //     card.y + CARD_HEIGHT / 2,
-  //   );
-
-  //   // 计算缩放后的尺寸（原尺寸的70%）
-  //   const imgWidth = CARD_WIDTH * 0.7;
-  //   const imgHeight = CARD_HEIGHT * 0.7;
-
-  //   // 计算居中位置
-  //   const imgX = card.x + (CARD_WIDTH - imgWidth) / 2;
-  //   const imgY = card.y + (CARD_HEIGHT - imgHeight) / 2;
-
-  // 画图片
-  //   const img = new Image();
-  //   img.src = "images/" + card.imageFile;
-  //   ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
 
   // 从缓存取图片
   const img = imageCache[card.imageFile];
@@ -300,6 +321,8 @@ function drawCard(card) {
     ctx.fillStyle = "rgba(130, 130, 138, 0.6)"; // 半透明灰
     // ctx.fillRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
     roundRect(ctx, card.x, card.y, CARD_WIDTH, CARD_HEIGHT, 10);
+    // roundRect(ctx, drawX, drawY, drawWidth, drawHeight, 10);
+
     ctx.fill();
   }
 }
@@ -336,14 +359,23 @@ function drawSlots() {
 }
 
 // 更新所有牌的遮盖状态
-function updateCoverStatus() {
+function updateCoverStatus(hitCard) {
   // 找出所有在牌堆的牌
   const deckCards = allCards.filter(
     (card) => card.state === "onBoardHidden" || card.state === "onBoardVisible",
   );
 
+  //   // 记录每张牌原来的状态
+  //   const oldStates = {};
+  //   deckCards.forEach((card) => {
+  //     oldStates[card.id] = card.state;
+  //   });
+
   // 按 z 从小到大排序（从低到高）
   const sortedFromBottom = [...deckCards].sort((a, b) => a.z - b.z);
+
+  //   // 准备一个数组存放需要重画的牌（和被点牌重叠的）
+  //   const overlapCards = [];
 
   // 遍历每一张牌（从低到高）
   for (let i = 0; i < sortedFromBottom.length; i++) {
@@ -368,7 +400,17 @@ function updateCoverStatus() {
       lowerCard.state = "onBoardVisible";
     }
     // 否则保持 hidden（不用动）
+    // // 如果有 hitCard，并且这张牌和 hitCard 重叠，就记下来
+    // if (hitCard && isOverlap(hitCard, lowerCard)) {
+    //   overlapCards.push(lowerCard);
+    // }
   }
+  //   // 找出状态变化的牌
+  //   const changedCards = deckCards.filter(
+  //     (card) => oldStates[card.id] !== card.state,
+  //   );
+
+  //   return overlapCards;
 }
 
 // 判断两张牌是否重叠
@@ -550,7 +592,7 @@ async function playClickAnimation(card) {
   const originalY = card.y;
 
   // 计算缩小后的尺寸和位置（以牌中心为基准）
-  const scale = 0.9;
+  const scale = 1.1;
   const scaledWidth = originalWidth * scale;
   const scaledHeight = originalHeight * scale;
   const scaledX = originalX + (originalWidth - scaledWidth) / 2;
@@ -563,8 +605,18 @@ async function playClickAnimation(card) {
   card.animY = scaledY;
 
   // 重绘
-  renderBoard();
+  //   renderBoard();
+  drawCard(card); // 只画这一张
   await sleep(80); // 停留 80ms
+
+  //   // 动画结束，清掉这张牌原来的位置（原大小）
+  //   ctx.clearRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
+
+  //   // 清除动画属性
+  //   delete card.animWidth;
+  //   delete card.animHeight;
+  //   delete card.animX;
+  //   delete card.animY;
 
   // 恢复原尺寸（放大）
   card.animWidth = originalWidth;
@@ -573,6 +625,7 @@ async function playClickAnimation(card) {
   card.animY = originalY;
 
   // 重绘
-  renderBoard();
+  //   renderBoard();
+  drawCard(card); // 只画这一张
   await sleep(50); // 再停一下
 }

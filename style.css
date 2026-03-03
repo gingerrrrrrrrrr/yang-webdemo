@@ -6,7 +6,7 @@ body {
 
 canvas {
   border: none;        /* 或者删除这一行 */
-  background-color: #90c7ad;
+  background-color: #becef1;
   margin-top: 20px;
   /* width: 100%;         让画布宽度自适应屏幕 */
   /* height: auto;        高度按比例缩放 */
