@@ -16,6 +16,16 @@ const cardTypeLibrary = [
   { typeId: "type-13", imageFile: "type-13.png" },
   { typeId: "type-14", imageFile: "type-14.png" },
   { typeId: "type-15", imageFile: "type-15.png" },
+  { typeId: "type-16", imageFile: "type-16.png" },
+  { typeId: "type-17", imageFile: "type-17.png" },
+  { typeId: "type-18", imageFile: "type-18.png" },
+  { typeId: "type-19", imageFile: "type-19.png" },
+  { typeId: "type-20", imageFile: "type-20.png" },
+  { typeId: "type-21", imageFile: "type-21.png" },
+  { typeId: "type-22", imageFile: "type-22.png" },
+  //   { typeId: "type-23", imageFile: "type-23.png" },
+  //   { typeId: "type-24", imageFile: "type-24.png" },
+  //   { typeId: "type-25", imageFile: "type-25.png" },
 ];
 
 // const cardTypeLibrary = [

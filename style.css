@@ -6,10 +6,10 @@ body {
 
 canvas {
   border: none;        /* 或者删除这一行 */
-  background-color: #becef1;
+  /* background-color: #becef1; */
   margin-top: 20px;
-  /* width: 100%;         让画布宽度自适应屏幕 */
-  /* height: auto;        高度按比例缩放 */
+  /* width: 100%;          让画布宽度自适应屏幕 */
+  height: auto;        /* 高度按比例缩放 */
 }
 
 .overlay {
@@ -67,3 +67,143 @@ canvas {
   border-radius: 8px;
   cursor: pointer;
 }
+/* 主菜单和选关屏幕共用样式 */
+.screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #becef1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.screen.hidden {
+  display: none;
+}
+
+/* 主菜单标题 */
+#menuScreen h1 {
+  font-size: 48px;     /* 加大字号 */
+  margin-bottom: 60px; /* 往下撑开点 */
+}
+
+/* 菜单按钮 */
+.menu-buttons {
+  display: flex;
+  gap: 40px;
+  flex-direction: column;  /* 改成竖排 */
+  gap: 40px;               /* 按钮间距 */
+  align-items: center;     /* 水平居中 */
+}
+
+.menu-btn {
+  padding: 20px 60px;
+  font-size: 36px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 0 #2d6a2d;
+}
+
+.menu-btn:active {
+  transform: translateY(8px);
+  box-shadow: none;
+}
+
+/* 选关页样式 */
+/* .level-grid {
+  width: 900px;
+  height: 600px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  margin: 30px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+/* 选关页标题 */
+#levelSelectScreen h2 {
+  font-size: 48px;     /* 加大字号 */
+  margin-bottom: 40px;
+}
+
+/* 放到 style.css 里 .level-grid 那块 */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  margin: 30px 0;
+}
+
+.level-item {
+  background-color: white;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.level-item:active {
+  transform: scale(0.95);
+}
+
+.level-item img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.level-item span {
+  font-size: 36px;
+  display: block;
+}
+
+.pagination {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-btn {
+  padding: 20px 5cqi;
+  font-size: 36px;
+  background-color: #ffa500;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.back-btn {
+  padding: 25px 60px;
+  font-size: 40px;
+  background-color: #888;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+#pageInfo {
+  font-size: 36px;     /* 页码文字也加大 */
+}
+
+/* 让 canvas 能隐藏 */
+#gameCanvas.hidden {
+  display: none;
+}
+

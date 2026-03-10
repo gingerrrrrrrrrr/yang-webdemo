@@ -7,12 +7,38 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>🐑🐑🐑🐑🐑</h1>
+    <!-- 主菜单层（默认显示） -->
+    <div id="menuScreen" class="screen">
+      <h1>🐑 仿 · 羊了个羊 · 极简版 🐑</h1>
+      <div class="menu-buttons">
+        <button id="startNewGameBtn" class="menu-btn">从头开始</button>
+        <button id="selectLevelBtn" class="menu-btn">选关</button>
+      </div>
+    </div>
+
+    <!-- 选关层（默认隐藏） -->
+    <div id="levelSelectScreen" class="screen hidden">
+      <h2>选一关吧</h2>
+      <div class="level-grid" id="levelGrid">
+        <!-- 这里稍后会用 js 动态生成关卡小图 -->
+        <p>关卡列表暂空</p>
+      </div>
+      <div class="pagination">
+        <button id="prevPageBtn" class="page-btn">上一页</button>
+        <span id="pageInfo">第 1 页</span>
+        <button id="nextPageBtn" class="page-btn">下一页</button>
+      </div>
+      <button id="backToMenuBtn" class="back-btn">返回主菜单</button>
+    </div>
+
+    <!-- 游戏画布（默认隐藏） -->
+    <!-- <h1>🐑🐑🐑🐑🐑</h1> -->
 
     <!-- 游戏画布：我们先用 canvas 来画，简单直接 -->
     <!-- <canvas id="gameCanvas" width="400" height="700"></canvas> -->
     <canvas id="gameCanvas" width="1080" height="1920"></canvas>
 
+    <!-- 游戏结束浮层 -->
     <div id="gameOverlay" class="overlay hidden">
       <div class="overlay-content">
         <p id="overlayMessage"></p>

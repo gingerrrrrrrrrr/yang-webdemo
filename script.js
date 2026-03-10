@@ -1,5 +1,83 @@
 // 羊了个羊 · 核心逻辑
 
+// 让画布一开始隐藏，显示菜单
+document.getElementById("gameCanvas").classList.add("hidden");
+
+// 在文件最开头（const CARD_WIDTH 上面）加上这些
+const menuScreen = document.getElementById("menuScreen");
+const levelSelectScreen = document.getElementById("levelSelectScreen");
+const gameCanvas = document.getElementById("gameCanvas");
+const startNewGameBtn = document.getElementById("startNewGameBtn");
+const selectLevelBtn = document.getElementById("selectLevelBtn");
+const backToMenuBtn = document.getElementById("backToMenuBtn");
+
+// 在文件末尾（resetGame 函数后面）加上这些（选关页相关内容）
+const levelGrid = document.getElementById("levelGrid");
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
+const pageInfo = document.getElementById("pageInfo");
+
+let currentPage = 0;
+const levelsPerPage = 6; // 每页显示6关
+
+// 在文件开头（const 定义后面）加上
+window.addEventListener("load", () => {
+  menuScreen.style.background = getRandomBgColor();
+});
+
+// “从头开始”按钮：隐藏菜单，显示画布，从第1关开始
+startNewGameBtn.addEventListener("click", () => {
+  menuScreen.classList.add("hidden");
+  gameCanvas.classList.remove("hidden");
+  currentLevelIndex = 0; // 设为第1关（数组从0开始）
+  resetGame(); // 用现有的 resetGame 加载关卡
+});
+
+// “返回主菜单”按钮（选关页里的）
+backToMenuBtn.addEventListener("click", () => {
+  levelSelectScreen.classList.add("hidden");
+  menuScreen.style.background = getRandomBgColor();
+  menuScreen.classList.remove("hidden");
+});
+
+// “选关”按钮：显示选关页，隐藏主菜单
+selectLevelBtn.addEventListener("click", () => {
+  menuScreen.classList.add("hidden");
+  levelSelectScreen.style.background = getRandomBgColor();
+  levelSelectScreen.classList.remove("hidden");
+  renderLevelGrid(); // ← 加上这行，打开选关页时生成格子
+});
+
+// 翻页事件（选关）
+prevPageBtn.addEventListener("click", () => {
+  if (currentPage > 0) {
+    currentPage--;
+    renderLevelGrid();
+  }
+});
+
+nextPageBtn.addEventListener("click", () => {
+  const totalPages = Math.ceil(levels.length / levelsPerPage);
+  if (currentPage < totalPages - 1) {
+    currentPage++;
+    renderLevelGrid();
+  }
+});
+
+// 点选关卡（选关委托事件）
+levelGrid.addEventListener("click", (e) => {
+  const levelItem = e.target.closest(".level-item");
+  if (!levelItem) return;
+
+  const levelIndex = levelItem.dataset.levelIndex;
+  currentLevelIndex = parseInt(levelIndex);
+
+  // 隐藏选关页，显示画布，加载关卡
+  levelSelectScreen.classList.add("hidden");
+  gameCanvas.classList.remove("hidden");
+  resetGame();
+});
+
 // 牌的基本尺寸
 const CARD_WIDTH = 128;
 const CARD_HEIGHT = 128;
@@ -7,7 +85,7 @@ const CARD_HEIGHT = 128;
 // 卡槽配置（加在文件前面，CARD_WIDTH/HEIGHT 下面）
 const SLOT_COUNT = 7; // 卡槽数量
 const SLOT_START_X = 55; // 卡槽起始 X 坐标
-const SLOT_START_Y = 1700; // 卡槽起始 Y 坐标（画布高700，留出底部空间）
+const SLOT_START_Y = 1620; // 卡槽起始 Y 坐标（画布高700，留出底部空间）
 const SLOT_SPACING = 140; // 卡槽间距（比牌宽稍大）
 
 // 图片缓存
@@ -92,8 +170,16 @@ canvas.addEventListener("click", async function (event) {
   if (hitCard) {
     if (hitCard.state === "onBoardVisible") {
       console.log("✅ 点击了可见牌：", hitCard);
+
+      //   // 闪一下效果（直接在现有画面上画白色）
+      //   ctx.save();
+      //   ctx.globalAlpha = 0.3;
+      //   ctx.fillStyle = "white";
+      //   ctx.fillRect(hitCard.x, hitCard.y, CARD_WIDTH, CARD_HEIGHT);
+      //   ctx.restore();
+
       // 播放动画
-      //   await playClickAnimation(hitCard);
+      await playClickAnimation(hitCard);
 
       //   // 动画结束后，清除动画属性
       //   delete hitCard.animX;
@@ -240,6 +326,12 @@ function generateDeck() {
   // 生成完牌后，更新遮盖状态
   updateCoverStatus();
   // 调用渲染
+
+  // 随机背景色
+  //   ctx.fillStyle = getRandomBgColor();
+  //   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  canvas.style.backgroundColor = getRandomBgColor();
+
   renderBoard();
 }
 
@@ -263,12 +355,12 @@ function renderBoard() {
 
 // 画单张牌
 function drawCard(card) {
-  // 如果存在动画尺寸，优先使用
-  //   const drawX = card.animX !== undefined ? card.animX : card.x;
-  //   const drawY = card.animY !== undefined ? card.animY : card.y;
-  //   const drawWidth = card.animWidth !== undefined ? card.animWidth : CARD_WIDTH;
-  //   const drawHeight =
-  //     card.animHeight !== undefined ? card.animHeight : CARD_HEIGHT;
+  //如果存在动画尺寸，优先使用
+  const drawX = card.animX !== undefined ? card.animX : card.x;
+  const drawY = card.animY !== undefined ? card.animY : card.y;
+  const drawWidth = card.animWidth !== undefined ? card.animWidth : CARD_WIDTH;
+  const drawHeight =
+    card.animHeight !== undefined ? card.animHeight : CARD_HEIGHT;
 
   // 设置阴影（模糊一点，稍微右下偏移）
   ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
@@ -290,8 +382,8 @@ function drawCard(card) {
   gradient.addColorStop(1, "#dcdcdc"); // 右下暗
   ctx.fillStyle = gradient; // 设置渐变填充
 
-  roundRect(ctx, card.x, card.y, CARD_WIDTH, CARD_HEIGHT, 10);
-  //   roundRect(ctx, drawX, drawY, drawWidth, drawHeight, 10);
+  //   roundRect(ctx, card.x, card.y, CARD_WIDTH, CARD_HEIGHT, 10);
+  roundRect(ctx, drawX, drawY, drawWidth, drawHeight, 10);
 
   ctx.fill();
   // 关掉阴影（免得文字也有阴影）
@@ -320,8 +412,8 @@ function drawCard(card) {
   if (card.state === "onBoardHidden") {
     ctx.fillStyle = "rgba(130, 130, 138, 0.6)"; // 半透明灰
     // ctx.fillRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
-    roundRect(ctx, card.x, card.y, CARD_WIDTH, CARD_HEIGHT, 10);
-    // roundRect(ctx, drawX, drawY, drawWidth, drawHeight, 10);
+    // roundRect(ctx, card.x, card.y, CARD_WIDTH, CARD_HEIGHT, 10);
+    roundRect(ctx, drawX, drawY, drawWidth, drawHeight, 10);
 
     ctx.fill();
   }
@@ -583,7 +675,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// 播放点击动画（缩放）
+// 播放点击动画（闪白 + 逐渐变大）
 async function playClickAnimation(card) {
   // 记录原尺寸
   const originalWidth = CARD_WIDTH;
@@ -591,41 +683,106 @@ async function playClickAnimation(card) {
   const originalX = card.x;
   const originalY = card.y;
 
-  // 计算缩小后的尺寸和位置（以牌中心为基准）
-  const scale = 1.1;
-  const scaledWidth = originalWidth * scale;
-  const scaledHeight = originalHeight * scale;
-  const scaledX = originalX + (originalWidth - scaledWidth) / 2;
-  const scaledY = originalY + (originalHeight - scaledHeight) / 2;
+  // 动画10步，每步10ms，总共100ms
+  for (let step = 0; step < 10; step++) {
+    // 计算当前步的缩放比例（从1.0到1.15）
+    const scale = 1 + (step / 10) * 0.15;
 
-  // 临时修改牌的尺寸和位置（缩小）
-  card.animWidth = scaledWidth;
-  card.animHeight = scaledHeight;
-  card.animX = scaledX;
-  card.animY = scaledY;
+    // 计算缩放后的尺寸和位置
+    const scaledWidth = originalWidth * scale;
+    const scaledHeight = originalHeight * scale;
+    const scaledX = originalX + (originalWidth - scaledWidth) / 2;
+    const scaledY = originalY + (originalHeight - scaledHeight) / 2;
 
-  // 重绘
+    // 设置动画属性
+    card.animWidth = scaledWidth;
+    card.animHeight = scaledHeight;
+    card.animX = scaledX;
+    card.animY = scaledY;
+
+    // 重绘整张牌（带白色蒙版）
+    drawCard(card);
+
+    // 加白色蒙版（只在第一帧加）
+    if (step === 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = "white";
+      ctx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
+      ctx.restore();
+    }
+
+    await sleep(10); // 等10ms
+  }
+
+  //   // 计算缩小后的尺寸和位置（以牌中心为基准）
+  //   const scale = 1.1;
+  //   const scaledWidth = originalWidth * scale;
+  //   const scaledHeight = originalHeight * scale;
+  //   const scaledX = originalX + (originalWidth - scaledWidth) / 2;
+  //   const scaledY = originalY + (originalHeight - scaledHeight) / 2;
+
+  //   // 临时修改牌的尺寸和位置（缩小）
+  //   card.animWidth = scaledWidth;
+  //   card.animHeight = scaledHeight;
+  //   card.animX = scaledX;
+  //   card.animY = scaledY;
+
+  //   // 重绘
+  //   //   renderBoard();
+  //   drawCard(card); // 只画这一张
+  //   await sleep(80); // 停留 80ms
+
+  //   // 恢复原尺寸（放大）
+  //   card.animWidth = originalWidth;
+  //   card.animHeight = originalHeight;
+  //   card.animX = originalX;
+  //   card.animY = originalY;
+
+  //   // 重绘
+  //   //   renderBoard();
+  //   drawCard(card); // 只画这一张
+  //   await sleep(50); // 再停一下
+
+  // 动画结束，清除动画属性
+  delete card.animWidth;
+  delete card.animHeight;
+  delete card.animX;
+  delete card.animY;
   //   renderBoard();
-  drawCard(card); // 只画这一张
-  await sleep(80); // 停留 80ms
+}
 
-  //   // 动画结束，清掉这张牌原来的位置（原大小）
-  //   ctx.clearRect(card.x, card.y, CARD_WIDTH, CARD_HEIGHT);
+// 生成选关页面的关卡格子
+function renderLevelGrid() {
+  const startIdx = currentPage * levelsPerPage;
+  const endIdx = Math.min(startIdx + levelsPerPage, levels.length);
 
-  //   // 清除动画属性
-  //   delete card.animWidth;
-  //   delete card.animHeight;
-  //   delete card.animX;
-  //   delete card.animY;
+  let html = "";
+  for (let i = startIdx; i < endIdx; i++) {
+    const levelNum = i + 1;
+    html += `
+      <div class="level-item" data-level-index="${i}">
+        <img src="images/level-thumb-${levelNum}.png" alt="第${levelNum}关">
+        <span>第${levelNum}关</span>
+      </div>
+    `;
+  }
+  levelGrid.innerHTML = html;
 
-  // 恢复原尺寸（放大）
-  card.animWidth = originalWidth;
-  card.animHeight = originalHeight;
-  card.animX = originalX;
-  card.animY = originalY;
+  // 更新页码显示
+  const totalPages = Math.ceil(levels.length / levelsPerPage);
+  pageInfo.textContent = `第 ${currentPage + 1} / ${totalPages} 页`;
 
-  // 重绘
-  //   renderBoard();
-  drawCard(card); // 只画这一张
-  await sleep(50); // 再停一下
+  // 控制翻页按钮
+  prevPageBtn.disabled = currentPage === 0;
+  nextPageBtn.disabled = currentPage >= totalPages - 1;
+}
+
+// 生成随机背景色（低饱和度、高亮度）
+function getRandomBgColor() {
+  const hue = Math.floor(Math.random() * 360); // 随机色相 0-359
+  //   return `linear-gradient(145deg,
+  //     hsl(${hue}, 30%, 85%),
+  //     hsl(${hue}, 40%, 75%))`;
+  return `hsl(${hue}, 20%, 90%)`;
 }
