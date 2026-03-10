@@ -137,8 +137,8 @@ canvas {
 
 /* 放到 style.css 里 .level-grid 那块 */
 .level-grid {
-  width: 90%; /* 改成百分比，占屏幕宽度的90% */
-  max-width: 600px; /* 但最大不超过900px */
+  /*width: 90%;  改成百分比，占屏幕宽度的90% */
+  max-width: 400px; /* 但最大不超过900px */
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
@@ -162,8 +162,8 @@ canvas {
 }
 
 .level-item img {
-  width: 220px;
-  height: 220px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 8px;
@@ -208,3 +208,4 @@ canvas {
 #gameCanvas.hidden {
   display: none;
 }
+
