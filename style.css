@@ -138,7 +138,7 @@ canvas {
 /* 放到 style.css 里 .level-grid 那块 */
 .level-grid {
   width: 90%; /* 改成百分比，占屏幕宽度的90% */
-  max-width: 900px; /* 但最大不超过900px */
+  max-width: 600px; /* 但最大不超过900px */
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
