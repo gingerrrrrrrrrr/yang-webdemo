@@ -1,15 +1,15 @@
 body {
-    text-align: center;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
 }
 
 canvas {
-  border: none;        /* 或者删除这一行 */
+  border: none; /* 或者删除这一行 */
   /* background-color: #becef1; */
   margin-top: 20px;
   /* width: 100%;          让画布宽度自适应屏幕 */
-  height: auto;        /* 高度按比例缩放 */
+  height: auto; /* 高度按比例缩放 */
 }
 
 .overlay {
@@ -39,7 +39,7 @@ canvas {
 }
 
 #overlayMessage.win {
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 #overlayMessage.lose {
@@ -59,9 +59,9 @@ canvas {
 } */
 .overlay-button {
   margin-top: 40px;
-  padding:20px 60px;
+  padding: 20px 60px;
   font-size: 32px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 8px;
@@ -88,7 +88,7 @@ canvas {
 
 /* 主菜单标题 */
 #menuScreen h1 {
-  font-size: 48px;     /* 加大字号 */
+  font-size: 48px; /* 加大字号 */
   margin-bottom: 60px; /* 往下撑开点 */
 }
 
@@ -96,15 +96,15 @@ canvas {
 .menu-buttons {
   display: flex;
   gap: 40px;
-  flex-direction: column;  /* 改成竖排 */
-  gap: 40px;               /* 按钮间距 */
-  align-items: center;     /* 水平居中 */
+  flex-direction: column; /* 改成竖排 */
+  gap: 40px; /* 按钮间距 */
+  align-items: center; /* 水平居中 */
 }
 
 .menu-btn {
   padding: 20px 60px;
   font-size: 36px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 16px;
@@ -131,12 +131,14 @@ canvas {
 
 /* 选关页标题 */
 #levelSelectScreen h2 {
-  font-size: 48px;     /* 加大字号 */
+  font-size: 48px; /* 加大字号 */
   margin-bottom: 40px;
 }
 
 /* 放到 style.css 里 .level-grid 那块 */
 .level-grid {
+  width: 90%; /* 改成百分比，占屏幕宽度的90% */
+  max-width: 900px; /* 但最大不超过900px */
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
@@ -199,11 +201,10 @@ canvas {
   cursor: pointer;
 }
 #pageInfo {
-  font-size: 36px;     /* 页码文字也加大 */
+  font-size: 36px; /* 页码文字也加大 */
 }
 
 /* 让 canvas 能隐藏 */
 #gameCanvas.hidden {
   display: none;
 }
-
