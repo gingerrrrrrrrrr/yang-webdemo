@@ -166,11 +166,11 @@ canvas {
   height: 100px;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
 }
 
 .level-item span {
-  font-size: 36px;
+  font-size: 24px;
   display: block;
 }
 
@@ -183,7 +183,7 @@ canvas {
 
 .page-btn {
   padding: 20px 5cqi;
-  font-size: 36px;
+  font-size: 24px;
   background-color: #ffa500;
   color: white;
   border: none;
@@ -192,8 +192,8 @@ canvas {
 }
 
 .back-btn {
-  padding: 25px 60px;
-  font-size: 40px;
+  padding: 20px 40px;
+  font-size: 24px;
   background-color: #888;
   color: white;
   border: none;
@@ -201,11 +201,10 @@ canvas {
   cursor: pointer;
 }
 #pageInfo {
-  font-size: 36px; /* 页码文字也加大 */
+  font-size: 24px; /* 页码文字也加大 */
 }
 
 /* 让 canvas 能隐藏 */
 #gameCanvas.hidden {
   display: none;
 }
-
